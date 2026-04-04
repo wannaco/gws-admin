@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # GWS Admin - Automated GCP Project Setup
 # This script automates the entire GCP setup process
@@ -33,7 +32,7 @@ echo "${YELLOW}📋 Using project name: $PROJECT_NAME${NC}"
 
 # Step 1: Create project
 echo ""
-echo "${YELLOW}Step 1/5: Creating GCP project...${NC}"
+echo "${YELLOW}Step 1/4: Creating GCP project...${NC}"
 gcloud projects create $PROJECT_NAME \
     --name="GWS Admin - $(date +%Y-%m-%d)" \
     --set-as-default 2>/dev/null || {
@@ -43,30 +42,16 @@ gcloud projects create $PROJECT_NAME \
 
 echo "${GREEN}✓ Project created/selected${NC}"
 
-# Step 2: Link billing
-if [ -z "$BILLING_ACCOUNT" ]; then
-    echo ""
-    echo "${YELLOW}Available billing accounts:${NC}"
-    gcloud billing accounts list --format="table[box](displayName,name,open)"
-    echo ""
-    read -p "Enter billing account ID (from NAME column above): " BILLING_ACCOUNT
-fi
-
+# Step 2: Enable APIs (billing not required for Admin SDK)
 echo ""
-echo "${YELLOW}Step 2/5: Linking billing account...${NC}"
-gcloud billing projects link $PROJECT_NAME --billing-account=$BILLING_ACCOUNT
-echo "${GREEN}✓ Billing linked${NC}"
-
-# Step 3: Enable APIs
-echo ""
-echo "${YELLOW}Step 3/5: Enabling APIs...${NC}"
+echo "${YELLOW}Step 2/4: Enabling APIs...${NC}"
 gcloud services enable admin.googleapis.com
 gcloud services enable gmail.googleapis.com
 echo "${GREEN}✓ APIs enabled${NC}"
 
-# Step 4: Create service account
+# Step 3: Create service account
 echo ""
-echo "${YELLOW}Step 4/5: Creating service account...${NC}"
+echo "${YELLOW}Step 3/4: Creating service account...${NC}"
 SERVICE_ACCOUNT="gws-admin-sa@$PROJECT_NAME.iam.gserviceaccount.com"
 gcloud iam service-accounts create gws-admin-sa \
     --display-name="GWS Admin Service Account" \
@@ -75,9 +60,9 @@ gcloud iam service-accounts create gws-admin-sa \
 }
 echo "${GREEN}✓ Service account ready${NC}"
 
-# Step 5: Create key
+# Step 4: Create key
 echo ""
-echo "${YELLOW}Step 5/5: Creating service account key...${NC}"
+echo "${YELLOW}Step 4/4: Creating service account key...${NC}"
 KEY_FILE="$HOME/gws-admin-key-$PROJECT_NAME.json"
 gcloud iam service-accounts keys create "$KEY_FILE" \
     --iam-account=$SERVICE_ACCOUNT
