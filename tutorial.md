@@ -42,45 +42,20 @@ echo "✓ Project created: $PROJECT_NAME"
 
 <walkthrough-footnote>This creates a new GCP project in your organization.</walkthrough-footnote>
 
-## Step 3: Link Billing Account
+## Step 2: Enable Required APIs
 
-You need to link a billing account. First, let's find your billing account ID:
-
-```bash
-gcloud billing accounts list
-```
-
-Copy the **ACCOUNT_ID** (looks like: `0X0X0X-0X0X0X-0X0X0X`), then run:
+Now let's enable the APIs GWS Admin needs:
 
 ```bash
-export BILLING_ACCOUNT="YOUR_BILLING_ACCOUNT_ID"
-gcloud billing projects link $PROJECT_NAME --billing-account=$BILLING_ACCOUNT
-echo "✓ Billing linked"
-```
-
-<walkthrough-warning-title>Don't have a billing account?</walkthrough-warning-title>
-<walkthrough-warning>
-Go to [Google Cloud Billing](https://console.cloud.google.com/billing) to create one first.
-</walkthrough-warning>
-
-## Step 4: Enable Required APIs
-
-Now let's enable all the APIs GWS Admin needs:
-
-```bash
-gcloud services enable firebase.googleapis.com \
-  firestore.googleapis.com \
-  cloudfunctions.googleapis.com \
-  secretmanager.googleapis.com \
-  admin.googleapis.com \
-  gmail.googleapis.com
+gcloud services enable admin.googleapis.com
+gcloud services enable gmail.googleapis.com
 
 echo "✓ APIs enabled"
 ```
 
-<walkthrough-footnote>This may take 1-2 minutes.</walkthrough-footnote>
+<walkthrough-footnote>These are the Admin SDK and Gmail APIs for domain-wide delegation. Billing is NOT required.</walkthrough-footnote>
 
-## Step 5: Create Service Account
+## Step 3: Create Service Account
 
 Create a service account for domain-wide delegation:
 
@@ -92,7 +67,7 @@ gcloud iam service-accounts create gws-admin-sa \
 echo "✓ Service account created"
 ```
 
-## Step 6: Create and Download Key
+## Step 4: Create and Download Key
 
 Create a JSON key for the service account:
 
@@ -109,7 +84,7 @@ cat ~/gws-admin-key.json
 Your key is displayed above. Copy this entire JSON and save it securely. You'll paste it into GWS Admin settings.
 </walkthrough-success>
 
-## Step 7: Grant Domain-Wide Delegation Authority (Manual Step)
+## Step 5: Grant Domain-Wide Delegation Authority (Manual Step)
 
 <walkthrough-warning-title>Important: Manual Step Required</walkthrough-warning-title>
 <walkthrough-warning>
@@ -133,7 +108,7 @@ echo "Client ID: $(gcloud iam service-accounts describe gws-admin-sa@$PROJECT_NA
 
 6. Click "Authorize"
 
-## Step 8: Get Your Project ID
+## Step 6: Get Your Project ID
 
 Your project ID is:
 
@@ -146,8 +121,8 @@ echo "Project Number: $(gcloud projects describe $PROJECT_NAME --format='value(p
 
 ## Next Steps
 
-1. **Copy the JSON key** from Step 6
-2. **Complete domain-wide delegation** in Step 7
+1. **Copy the JSON key** from Step 4
+2. **Complete domain-wide delegation** in Step 5
 3. **Go to GWS Admin** and paste your credentials in Settings
 
 <walkthrough-conclusion>
@@ -155,10 +130,6 @@ echo "Project Number: $(gcloud projects describe $PROJECT_NAME --format='value(p
 </walkthrough-conclusion>
 
 ## Troubleshooting
-
-**"Billing account not found"**
-- Ensure you have billing administrator permissions
-- Check [Google Cloud Billing](https://console.cloud.google.com/billing)
 
 **"Permission denied"**
 - Make sure you're a project owner or have Project Creator role
