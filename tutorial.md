@@ -69,6 +69,11 @@ echo "✓ Service account created"
 
 ## Step 4: Create and Download Key
 
+> **⚠️ Enterprise org policy note:** If your Google Cloud organisation enforces
+> `iam.disableServiceAccountKeyCreation`, this step will fail. See the
+> **Troubleshooting** section at the end of this tutorial for the fix before
+> continuing.
+
 Create a JSON key for the service account:
 
 ```bash
@@ -144,3 +149,21 @@ echo "Project Number: $(gcloud projects describe $PROJECT_NAME --format='value(p
 gcloud iam service-accounts keys create ~/gws-admin-key-new.json \
   --iam-account=gws-admin-sa@$PROJECT_NAME.iam.gserviceaccount.com
 ```
+
+**"Service account key creation is disabled" (iam.disableServiceAccountKeyCreation)**
+
+Your Google Workspace organisation has an org policy that prevents JSON key
+downloads. The setup script will automatically attempt to override this for
+you — if it succeeds you don't need to do anything manually.
+
+If the auto-fix fails (e.g. you see "Could not override the org policy"), run
+this command yourself (requires `roles/orgpolicy.policyAdmin`):
+
+```bash
+gcloud resource-manager org-policies disable-enforce \
+  constraints/iam.disableServiceAccountKeyCreation \
+  --project=$PROJECT_NAME
+```
+
+Then re-run Step 4. If you don't have that role, ask your GCP Org Policy
+Administrator to run the command above for your project.
