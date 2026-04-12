@@ -64,8 +64,40 @@ echo "${GREEN}✓ Service account ready${NC}"
 echo ""
 echo "${YELLOW}Step 4/4: Creating service account key...${NC}"
 KEY_FILE="$HOME/gws-admin-key-$PROJECT_NAME.json"
-gcloud iam service-accounts keys create "$KEY_FILE" \
-    --iam-account=$SERVICE_ACCOUNT
+_create_key() {
+    gcloud iam service-accounts keys create "$KEY_FILE" \
+        --iam-account="$SERVICE_ACCOUNT" 2>/tmp/key_err
+}
+if ! _create_key; then
+    if grep -q "disableServiceAccountKeyCreation\|FAILED_PRECONDITION" /tmp/key_err; then
+        echo ""
+        echo "${YELLOW}⚠️  Org policy blocks key creation. Attempting to override for this project...${NC}"
+        if gcloud resource-manager org-policies disable-enforce \
+            constraints/iam.disableServiceAccountKeyCreation \
+            --project="$PROJECT_NAME" 2>/tmp/policy_err; then
+            echo "${GREEN}✓ Policy overridden. Retrying key creation...${NC}"
+            sleep 3  # allow policy propagation
+            if ! _create_key; then
+                echo "${RED}❌ Key creation still failed after policy override:${NC}"
+                cat /tmp/key_err
+                exit 1
+            fi
+        else
+            echo "${RED}❌ Could not override the org policy (you may need roles/orgpolicy.policyAdmin).${NC}"
+            echo ""
+            echo "Ask your GCP Org Policy Administrator to run:"
+            echo "  gcloud resource-manager org-policies disable-enforce \\"
+            echo "    constraints/iam.disableServiceAccountKeyCreation \\"
+            echo "    --project=$PROJECT_NAME"
+            echo "Then re-run this script."
+            exit 1
+        fi
+    else
+        echo "${RED}❌ Key creation failed:${NC}"
+        cat /tmp/key_err
+        exit 1
+    fi
+fi
 echo "${GREEN}✓ Key saved to: $KEY_FILE${NC}"
 
 # Get client ID
