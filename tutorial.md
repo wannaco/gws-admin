@@ -16,13 +16,15 @@ This tutorial will help you create and configure a Google Cloud Platform project
 
 Click **Next** to begin.
 
-## Step 1: Set Active Account
+## Step 1: Link Your Account to gcloud
 
-Cloud Shell is pre-authenticated but gcloud needs the active account configured. Run:
+Cloud Shell is already authenticated via your browser session, but gcloud CLI needs the account explicitly registered in its config. Run:
 
 ```bash
-gcloud config set account $(gcloud auth list --format="value(account)" | head -1)
+gcloud auth login
 ```
+
+Type **Y** at the prompt — this does **not** re-authenticate you. It just links your existing Cloud Shell session to gcloud's configuration so commands like `gcloud projects create` work correctly.
 
 ## Step 2: Set Your Project Name
 
