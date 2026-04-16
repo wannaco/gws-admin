@@ -16,33 +16,39 @@ This tutorial will help you create and configure a Google Cloud Platform project
 
 Click **Next** to begin.
 
-## Step 1: Set Your Project Name
+## Step 1: Set Active Account
 
-First, let's set a name for your project.
+Cloud Shell is pre-authenticated but gcloud needs the active account configured. Run:
 
-In the terminal below, run:
+```bash
+gcloud config set account $(gcloud auth list --format="value(account)" | head -1)
+```
+
+## Step 2: Set Your Project Name
+
+Set a name for your new GCP project:
 
 ```bash
 export PROJECT_NAME="gws-admin-$(date +%s)"
-echo "Project name set to: $PROJECT_NAME"
+echo "Project name: $PROJECT_NAME"
 ```
 
 <walkthrough-footnote>You can change this to any unique name you prefer.</walkthrough-footnote>
 
-## Step 2: Create Your GCP Project
+## Step 3: Create Your GCP Project
 
 Now let's create the project:
 
 ```bash
 gcloud projects create $PROJECT_NAME \
-  --name="GWS Admin - $(date +%Y-%m-%d)" \
-  --set-as-default
-echo "✓ Project created: $PROJECT_NAME"
+  --name="GWS Admin - $(date +%Y-%m-%d)"
+gcloud config set project $PROJECT_NAME
+echo "Project created: $PROJECT_NAME"
 ```
 
 <walkthrough-footnote>This creates a new GCP project in your organization.</walkthrough-footnote>
 
-## Step 2: Enable Required APIs
+## Step 3: Enable Required APIs
 
 Now let's enable the APIs GWS Admin needs:
 
@@ -50,7 +56,7 @@ Now let's enable the APIs GWS Admin needs:
 gcloud services enable admin.googleapis.com
 gcloud services enable gmail.googleapis.com
 
-echo "✓ APIs enabled"
+echo "APIs enabled"
 ```
 
 <walkthrough-footnote>These are the Admin SDK and Gmail APIs for domain-wide delegation. Billing is NOT required.</walkthrough-footnote>
@@ -64,7 +70,7 @@ gcloud iam service-accounts create gws-admin-sa \
   --display-name="GWS Admin Service Account" \
   --description="Service account for GWS Admin domain-wide delegation"
 
-echo "✓ Service account created"
+echo "Service account created"
 ```
 
 ## Step 4: Create and Download Key
@@ -80,7 +86,7 @@ Create a JSON key for the service account:
 gcloud iam service-accounts keys create ~/gws-admin-key.json \
   --iam-account=gws-admin-sa@$PROJECT_NAME.iam.gserviceaccount.com
 
-echo "✓ Key created at: ~/gws-admin-key.json"
+echo "Key created at: ~/gws-admin-key.json"
 cat ~/gws-admin-key.json
 ```
 
