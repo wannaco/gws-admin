@@ -135,8 +135,9 @@ echo "Project Number: $(gcloud projects describe $PROJECT_NAME --format='value(p
 ## Next Steps
 
 1. **Copy the JSON key** from Step 4
-2. **Complete domain-wide delegation** in Step 5
-3. **Go to GWS Admin** and paste your credentials in Settings
+2. Save the json from the console as with a desired name like credentiasgws.json
+4. **Complete domain-wide delegation** in Step 5
+5. **Go to GWS Admin** and upload your  credentials json file in Settings
 
 <walkthrough-conclusion>
 **Need help?** Contact support at support@thinkcloud.dev
