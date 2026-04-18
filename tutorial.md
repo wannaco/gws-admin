@@ -57,11 +57,12 @@ Now let's enable the APIs GWS Admin needs:
 ```bash
 gcloud services enable admin.googleapis.com
 gcloud services enable gmail.googleapis.com
+gcloud services enable calendar-json.googleapis.com
 
 echo "APIs enabled"
 ```
 
-<walkthrough-footnote>These are the Admin SDK and Gmail APIs for domain-wide delegation. Billing is NOT required.</walkthrough-footnote>
+<walkthrough-footnote>These are the Admin SDK, Gmail, and Calendar APIs for domain-wide delegation. Billing is NOT required.</walkthrough-footnote>
 
 ## Step 3: Create Service Account
 
@@ -118,6 +119,7 @@ echo "Client ID: $(gcloud iam service-accounts describe gws-admin-sa@$PROJECT_NA
    - `https://www.googleapis.com/auth/gmail.settings.sharing`
    - `https://www.googleapis.com/auth/admin.directory.user.readonly`
    - `https://www.googleapis.com/auth/admin.directory.group.readonly`
+   - `https://www.googleapis.com/auth/calendar`
 
 6. Click "Authorize"
 
@@ -135,9 +137,8 @@ echo "Project Number: $(gcloud projects describe $PROJECT_NAME --format='value(p
 ## Next Steps
 
 1. **Copy the JSON key** from Step 4
-2. Save the json from the console as with a desired name like credentiasgws.json
-4. **Complete domain-wide delegation** in Step 5
-5. **Go to GWS Admin** and upload your  credentials json file in Settings
+2. **Complete domain-wide delegation** in Step 5
+3. **Go to GWS Admin** and paste your credentials in Settings
 
 <walkthrough-conclusion>
 **Need help?** Contact support at support@thinkcloud.dev
